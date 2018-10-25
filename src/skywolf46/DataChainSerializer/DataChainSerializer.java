@@ -2,6 +2,8 @@ package skywolf46.DataChainSerializer;
 
 import org.fusesource.jansi.AnsiConsole;
 import skywolf46.DataChainSerializer.API.ClassConverter;
+import skywolf46.DataChainSerializer.Converters.Collections.Lists.ArrayListConverter;
+import skywolf46.DataChainSerializer.Converters.Collections.Lists.LinkedListConverter;
 import skywolf46.DataChainSerializer.Converters.Dates.DateConverter;
 import skywolf46.DataChainSerializer.Converters.Dates.GregorianCalendarConverter;
 import skywolf46.DataChainSerializer.Converters.Primary.*;
@@ -12,9 +14,7 @@ import skywolf46.DataChainSerializer.Enums.WriteType;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.ObjectInputStream;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
+import java.util.*;
 
 public class DataChainSerializer {
     private static HashMap<String, ClassConverter> converters = new HashMap<>();
@@ -32,25 +32,32 @@ public class DataChainSerializer {
         }
     }
 
-    private static void registerConverter(){
+    private static void registerConverter() {
         registerPrimary();
         registerDates();
+        registerCollections();
     }
 
-    private static void registerPrimary(){
-        registerConverter(Byte.class,new ByteConverter());
-        registerConverter(Character.class,new CharConverter());
-        registerConverter(Double.class,new DoubleConverter());
-        registerConverter(Float.class,new FloatConverter());
-        registerConverter(Integer.class,new IntegerConverter());
-        registerConverter(Short.class,new ShortConverter());
-        registerConverter(String.class,new StringConverter());
+    private static void registerPrimary() {
+        registerConverter(Byte.class, new ByteConverter());
+        registerConverter(Character.class, new CharConverter());
+        registerConverter(Double.class, new DoubleConverter());
+        registerConverter(Float.class, new FloatConverter());
+        registerConverter(Integer.class, new IntegerConverter());
+        registerConverter(Short.class, new ShortConverter());
+        registerConverter(String.class, new StringConverter());
     }
 
-    private static void registerDates(){
-        registerConverter(GregorianCalendar.class,new GregorianCalendarConverter());
-        registerConverter(Date.class,new DateConverter());
+    private static void registerDates() {
+        registerConverter(GregorianCalendar.class, new GregorianCalendarConverter());
+        registerConverter(Date.class, new DateConverter());
     }
+
+    private static void registerCollections() {
+        registerConverter(ArrayList.class, new ArrayListConverter());
+        registerConverter(LinkedList.class,new LinkedListConverter());
+    }
+
     public static ObjectDeserializer deserialize(File f) {
         try {
             ObjectInputStream ois = new ObjectInputStream(new FileInputStream(f));
@@ -82,32 +89,32 @@ public class DataChainSerializer {
         return null;
     }
 
-    public static <T> void registerConverter(Class<? extends T> cl,ClassConverter<T> convert){
-        converters.put(cl.getName(),convert);
+    public static <T> void registerConverter(Class<? extends T> cl, ClassConverter<T> convert) {
+        converters.put(cl.getName(), convert);
     }
 
-    public static ClassConverter getConverter(Class t){
+    public static ClassConverter getConverter(Class t) {
         ClassConverter conv = converters.get(t.getName());
         Class lastClass = t;
-        while (conv == null){
+        while (conv == null) {
             Class c = t.getSuperclass();
-            if(lastClass.equals(t))
+            if (lastClass.equals(t))
                 return null;
             conv = converters.get(c.getName());
         }
         return conv;
     }
 
-    public static ClassConverter getConverter(String className){
+    public static ClassConverter getConverter(String className) {
         return converters.get(className);
     }
 
-    public static Class getConvertable(Class t){
+    public static Class getConvertable(Class t) {
         ClassConverter conv = converters.get(t.getName());
         Class lastClass = t;
-        while (conv == null){
+        while (conv == null) {
             Class c = t.getSuperclass();
-            if(lastClass.equals(t))
+            if (lastClass.equals(t))
                 return null;
             conv = converters.get(c.getName());
         }

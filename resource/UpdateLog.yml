@@ -24,3 +24,7 @@
 '1.1.15.0-#5':
 - Date 클래스 컨버터가 추가되었습니다.
 - GregorianCalendar 클래스의 컨버터가 추가되었습니다. 다른 캘린더는 추후 업데이트 예정입니다.
+'1.1.18.1-#6':
+- ArrayList 클래스 컨버터가 추가되었습니다.
+- LinkedList 클래스 컨버터가 추가되었습니다.
+- ConverterNotDefinedException(RuntimeException) 이 추가되었습니다. 해당 Exception은 ClassConveter이 존재하지 않는 클래스를 serialize 혹은 deserialize 시도하면 발생합니다.
