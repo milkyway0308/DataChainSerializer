@@ -4,6 +4,7 @@ import skywolf46.DataChainSerializer.API.ClassConverter;
 import skywolf46.DataChainSerializer.Data.VariableWriter;
 import skywolf46.DataChainSerializer.DataChainSerializer;
 import skywolf46.DataChainSerializer.Enums.WriteType;
+import skywolf46.DataChainSerializer.Exception.ConverterNotDefinedException;
 import skywolf46.DataChainSerializer.Exception.SubSerializerSaveException;
 
 import java.io.ObjectOutputStream;
@@ -40,7 +41,7 @@ public class ObjectSerializer {
         return tser;
     }
 
-    public ObjectSerializer addSubSerializer(ObjectSerializer os) {
+    public <T extends ObjectSerializer> T addSubSerializer(T os) {
         nextSerializer.add(os);
         return os;
     }
@@ -182,7 +183,7 @@ public class ObjectSerializer {
     public ObjectSerializer writeObject(Object obj){
         ClassConverter conv = DataChainSerializer.getConverter(obj.getClass());
         if(conv == null)
-            throw new RuntimeException("Cannot serialize class " + obj.getClass() + " - ClassConverter not exist");
+            throw new ConverterNotDefinedException("Cannot serialize class " + obj.getClass() + " - ClassConverter not exist");
         VariableWriter vw = new VariableWriter(WriteType.CUSTOM_OBJECT,obj,0);
         writers.add(vw);
         addFileSize(vw.getSize());

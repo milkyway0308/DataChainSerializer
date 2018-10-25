@@ -2,7 +2,7 @@
 # 프로젝트 리메이크급의 수정은 메이저 버전,
 # 중요한 업데이트 혹은 거대한 버그는 마이너 버전,
 # 사소한 업데이트 혹은 클래스 수정은 메이저 픽스,
-# 메서드만 수정된 경우에는 마아너 픽스로 분류됩니다.
+# 메서드만 수정된 경우에는 마이너 픽스로 분류됩니다.
 # 모든 기능 추가는 개당 1의 버전 상승으로 분류되며,
 # 최초 버전 1.0.0.0만이 해당 사항을 무시합니다.
 # 빌드 버전은 파일 빌드마다 증가하며, 버전이 소실될 수 있습니다.
@@ -28,3 +28,7 @@
 - ArrayList 클래스 컨버터가 추가되었습니다.
 - LinkedList 클래스 컨버터가 추가되었습니다.
 - ConverterNotDefinedException(RuntimeException) 이 추가되었습니다. 해당 Exception은 ClassConveter이 존재하지 않는 클래스를 serialize 혹은 deserialize 시도하면 발생합니다.
+'1.1.19.2-#7':
+- HashMap 클래스 컨버터가 추가되었습니다.
+- ConverterNotDefinedException이 추가되었습니다.
+- ObjectSerializer#writeObject에서 컨버터가 등록되지 않은 클래스 사용 시도시 ConverterNotDefinedException이 발생하게 변경되었습니다.

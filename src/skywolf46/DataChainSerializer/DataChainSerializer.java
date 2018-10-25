@@ -4,6 +4,7 @@ import org.fusesource.jansi.AnsiConsole;
 import skywolf46.DataChainSerializer.API.ClassConverter;
 import skywolf46.DataChainSerializer.Converters.Collections.Lists.ArrayListConverter;
 import skywolf46.DataChainSerializer.Converters.Collections.Lists.LinkedListConverter;
+import skywolf46.DataChainSerializer.Converters.Collections.Maps.HashMapConverter;
 import skywolf46.DataChainSerializer.Converters.Dates.DateConverter;
 import skywolf46.DataChainSerializer.Converters.Dates.GregorianCalendarConverter;
 import skywolf46.DataChainSerializer.Converters.Primary.*;
@@ -56,6 +57,7 @@ public class DataChainSerializer {
     private static void registerCollections() {
         registerConverter(ArrayList.class, new ArrayListConverter());
         registerConverter(LinkedList.class,new LinkedListConverter());
+        registerConverter(HashMap.class,new HashMapConverter());
     }
 
     public static ObjectDeserializer deserialize(File f) {
