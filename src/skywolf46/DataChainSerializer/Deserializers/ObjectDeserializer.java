@@ -63,15 +63,16 @@ public class ObjectDeserializer {
     public final void deserialize(ObjectInputStream ois) throws Exception {
         clear();
         try {
-            readCoreData(ois.readInt(), ois.readInt(), ois.readInt());
-            deserialize_finally(ois);
+            readCoreData(ois.readInt(), ois.readInt(), ois.readInt(),0);
+            // Deserialize level 0
+            deserialize_finally(ois, 0);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
 
-    public final void readCoreData(int size, int varlength, int serlength) throws Exception {
+    public final void readCoreData(int size, int varlength, int serlength,int depth) throws Exception {
         byteSize = size;
         variableLength = varlength;
         serializerLength = serlength;
@@ -82,15 +83,20 @@ public class ObjectDeserializer {
     }
 
 
-    protected void deserialize_finally(ObjectInputStream ois) throws Exception {
+    // On first read, pre-read core data at before method/
+    protected void deserialize_finally(ObjectInputStream ois, int depthLevel) throws Exception {
         AtomicInteger leftByte = new AtomicInteger(byteSize);
         try {
+            // Read deserialize sub data
             readDeserializeData(ois);
+            // read variable.
             for (int i = 0; i < variableLength; i++) {
-                VariableReader vr = new VariableReader(ois,leftByte);
+                VariableReader vr = new VariableReader(ois);
                 this.variables.add(vr);
             }
+
             int byteLength = 0;
+            // try to read serializer
             for (int i = 0; i < serializerLength; i++) {
                 try {
                     int id = ois.readInt();
@@ -104,22 +110,22 @@ public class ObjectDeserializer {
                         throw new Exception();
                     }
                     subdes = subdes.getNewDeserializer();
-                    subdes.readCoreData(byteLength, varLength, serLength);
-                    subdes.deserialize_finally(ois);
+                    subdes.readCoreData(byteLength, varLength, serLength,depthLevel+1);
+                    subdes.deserialize_finally(ois, depthLevel + 1);
                     subDeserializers.add(subdes);
                 } catch (Exception ex) {
-//                    ex.printStackTrace();
-                    AnsiConsole.out().println(Ansi.ansi().a("[DataChainSerializer] Deserialize fail on " + getDeserializeName() + ",skipping left bytes (" + leftByte.get() + "byte)"));
+                    ex.printStackTrace();
+                    AnsiConsole.out().println(Ansi.ansi().a("[DataChainSerializer] Deserialize fail on " + getDeserializeName() + " / Deserialize depth level " + depthLevel + ",skipping left bytes (" + leftByte.get() + "byte)"));
                     ois.skipBytes(leftByte.get());
                 }
             }
         } catch (Exception ex) {
             ex.printStackTrace();
-            AnsiConsole.out().println(Ansi.ansi().a("[DataChainSerializer] Deserialize fail on " + getDeserializeName() + ",skipping left bytes (" +  leftByte.get() + "byte)"));
+            AnsiConsole.out().println(Ansi.ansi().a("[DataChainSerializer] Deserialize fail on " + getDeserializeName() + ",skipping left bytes (" + leftByte.get() + "byte)"));
         }
     }
 
-    public void clear(){
+    public void clear() {
         variables.clear();
         subDeserializers.clear();
     }
@@ -141,4 +147,7 @@ public class ObjectDeserializer {
     }
 
 
+    public int test() {
+        return variableLength;
+    }
 }

@@ -31,9 +31,7 @@ public class VariableWriter {
         switch (write) {
             case STRING: {
                 String n = (String) toWrite;
-                stream.writeInt(n.length());
-                for (char c : n.toCharArray())
-                    stream.writeChar(c);
+                StreamStringUtil.writeString(stream,n);
             }
             break;
             case FLOAT:

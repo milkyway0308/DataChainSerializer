@@ -2,6 +2,7 @@ package skywolf46.DataChainSerializer.Deserializers;
 
 
 import skywolf46.DataChainSerializer.Data.VariableReader;
+import skywolf46.DataChainSerializer.Util.StreamStringUtil;
 
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
@@ -42,12 +43,12 @@ public class ObjectFieldDeserializer extends ObjectDeserializer {
         int size = ois.readInt();
         int desSize = ois.readInt();
         for (int i = 0; i < size; i++) {
-            String n = readString(ois);
-            VariableReader vr = new VariableReader(ois,new AtomicInteger(size));
+            String n = StreamStringUtil.readString(ois);
+            VariableReader vr = new VariableReader(ois);
             readers.put(n, vr);
         }
         for (int i = 0; i < desSize; i++) {
-            String fieldName = readString(ois);
+            String fieldName = StreamStringUtil.readString(ois);
             int id = ois.readInt();
             int byteLength = ois.readInt();
             int varLength = ois.readInt();
@@ -57,19 +58,12 @@ public class ObjectFieldDeserializer extends ObjectDeserializer {
                 ois.skipBytes(byteLength);
                 continue;
             }
-            des.readCoreData(byteLength, varLength, serLength);
+            des.readCoreData(byteLength, varLength, serLength,0);
             des.deserialize(ois);
             ofd.put(fieldName, des);
         }
     }
 
-    private String readString(ObjectInputStream ois) throws Exception {
-        short s = ois.readShort();
-        char[] c = new char[s];
-        for (int v = 0; v < c.length; v++)
-            c[v] = ois.readChar();
-        return new String(c);
-    }
 
     public int getDeserializeID() {
         return "ObjectFieldDeserializer-Fielded Deserializer".hashCode();

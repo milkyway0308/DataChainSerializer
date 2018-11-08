@@ -78,8 +78,9 @@ public class DataChainSerializer {
             if (ois.available() <= 0) {
                 if (exitOnEOF)
                     return null;
-                while (ois.available() <= 0)
+                while (ois.available() <= 0){
                     Thread.sleep(0);
+                }
             }
             int id = ois.readInt();
             ObjectDeserializer des = ObjectDeserializer.getDeserializer(id).getNewDeserializer();

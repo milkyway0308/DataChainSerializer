@@ -27,6 +27,7 @@ public class ObjectFieldSerializer extends ObjectSerializer {
     protected void writeSerializeData(ObjectOutputStream oos) throws Exception {
         oos.writeInt(varWriters.size());
         oos.writeInt(ofd.size());
+
         for (Map.Entry<String, VariableWriter> vr : varWriters.entrySet()) {
             writeString(oos, vr.getKey());
             vr.getValue().write(oos);

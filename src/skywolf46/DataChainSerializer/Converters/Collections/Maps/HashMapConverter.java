@@ -13,6 +13,7 @@ import java.util.Set;
 public class HashMapConverter implements ClassConverter<HashMap> {
     @Override
     public void writeData(HashMap hashMap, ObjectSerializer serializer) {
+        serializer.writeInt(hashMap.size());
         ObjectSerializer key = serializer.addSubSerializer(new ObjectSerializer());
         ObjectSerializer val = serializer.addSubSerializer(new ObjectSerializer());
         Set<Map.Entry> sEntry = hashMap.entrySet();
