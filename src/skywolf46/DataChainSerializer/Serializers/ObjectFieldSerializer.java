@@ -196,8 +196,10 @@ public class ObjectFieldSerializer extends ObjectSerializer {
         return this;
     }
 
-
-
-
-
+    @Override
+    public void clear() {
+        super.clear();
+        varWriters.clear();
+        ofd.clear();
+    }
 }

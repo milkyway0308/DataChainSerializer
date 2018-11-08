@@ -58,11 +58,15 @@ public class ObjectSerializer {
             ex.printStackTrace();
         }
         if (clearData) {
-            nextSerializer.clear();
-            writers.clear();
-            variableLength.set(0);
-            size.set(0);
+            clear();
         }
+    }
+
+    public void clear() {
+        nextSerializer.clear();
+        writers.clear();
+        variableLength.set(0);
+        size.set(0);
     }
 
     private void writeCoreData(ObjectOutputStream oos) throws Exception {
