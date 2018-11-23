@@ -16,6 +16,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.ObjectInputStream;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class DataChainSerializer {
     private static HashMap<String, ClassConverter> converters = new HashMap<>();
@@ -122,5 +124,9 @@ public class DataChainSerializer {
             conv = converters.get(c.getName());
         }
         return t;
+    }
+    private static Logger logger = Logger.getLogger("DataChainSerializer/Debug");
+    public static void printDebug(String n){
+        logger.log(Level.FINE,n);
     }
 }

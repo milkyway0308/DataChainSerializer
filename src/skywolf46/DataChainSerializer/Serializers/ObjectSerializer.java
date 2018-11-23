@@ -195,6 +195,12 @@ public class ObjectSerializer {
         return this;
     }
 
+    public ObjectSerializer writeBoolean(boolean b){
+        writers.add(new VariableWriter(WriteType.BOOLEAN,b,1));
+        addFileSize(1).addFileSize(2);
+        return this;
+    }
+
     public ObjectSerializer addFileSize(int size) {
         this.size.addAndGet(size);
         return this;

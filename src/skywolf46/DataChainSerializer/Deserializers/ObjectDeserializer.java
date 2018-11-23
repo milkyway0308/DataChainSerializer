@@ -3,6 +3,7 @@ package skywolf46.DataChainSerializer.Deserializers;
 import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.AnsiConsole;
 import skywolf46.DataChainSerializer.Data.VariableReader;
+import skywolf46.DataChainSerializer.Enums.WriteType;
 import skywolf46.DataChainSerializer.Iterate.DefaultVariableReaderIterator;
 
 import java.io.IOException;
@@ -16,11 +17,16 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ObjectDeserializer {
     private List<ObjectDeserializer> subDeserializers = new ArrayList<>();
     private List<VariableReader> variables = new ArrayList<>();
+
     private int byteSize = 0;
+
     private int variableLength = 0;
+
     private int serializerLength = 0;
 
     private static HashMap<Integer, ObjectDeserializer> deserializerHashMap = new HashMap<>();
+
+    private int readIndex = 0;
 
     public ObjectDeserializer() {
 
@@ -63,7 +69,7 @@ public class ObjectDeserializer {
     public final void deserialize(ObjectInputStream ois) throws Exception {
         clear();
         try {
-            readCoreData(ois.readInt(), ois.readInt(), ois.readInt(),0);
+            readCoreData(ois.readInt(), ois.readInt(), ois.readInt(), 0);
             // Deserialize level 0
             deserialize_finally(ois, 0);
         } catch (IOException e) {
@@ -72,7 +78,7 @@ public class ObjectDeserializer {
     }
 
 
-    public final void readCoreData(int size, int varlength, int serlength,int depth) throws Exception {
+    public final void readCoreData(int size, int varlength, int serlength, int depth) throws Exception {
         byteSize = size;
         variableLength = varlength;
         serializerLength = serlength;
@@ -110,13 +116,12 @@ public class ObjectDeserializer {
                         throw new Exception();
                     }
                     subdes = subdes.getNewDeserializer();
-                    subdes.readCoreData(byteLength, varLength, serLength,depthLevel+1);
+                    subdes.readCoreData(byteLength, varLength, serLength, depthLevel + 1);
                     subdes.deserialize_finally(ois, depthLevel + 1);
                     subDeserializers.add(subdes);
                 } catch (Exception ex) {
                     ex.printStackTrace();
-                    AnsiConsole.out().println(Ansi.ansi().a("[DataChainSerializer] Deserialize fail on " + getDeserializeName() + " / Deserialize depth level " + depthLevel + ",skipping left bytes (" + leftByte.get() + "byte)"));
-                    ois.skipBytes(leftByte.get());
+                    AnsiConsole.out().println(Ansi.ansi().a("[DataChainSerializer] Deserialize fail on " + getDeserializeName() + " / Deserialize depth level " + depthLevel + ",skipping to next level"));
                 }
             }
         } catch (Exception ex) {
@@ -147,7 +152,83 @@ public class ObjectDeserializer {
     }
 
 
-    public int test() {
-        return variableLength;
+    public String getString(){
+        if(readIndex >= variables.size())
+            throw new IndexOutOfBoundsException("DataChainSerializer | Object max index is " + variables.size() + " but index " + readIndex + " has been given");
+        if(variables.get(readIndex).getType() != WriteType.STRING)
+            throw new ClassCastException("DataChainSerializer | Type of variable index " + readIndex + " is not string");
+        return variables.get(readIndex++).asString();
     }
+
+    public float getFloat(){
+        if(readIndex >= variables.size())
+            throw new IndexOutOfBoundsException("DataChainSerializer | Object max index is " + variables.size() + " but index " + readIndex + " has been given");
+        if(variables.get(readIndex).getType() != WriteType.FLOAT)
+            throw new ClassCastException("DataChainSerializer | Type of variable index " + readIndex + " is not float");
+        return variables.get(readIndex++).asFloat();
+    }
+
+    public String getInteger(){
+        if(readIndex >= variables.size())
+            throw new IndexOutOfBoundsException("DataChainSerializer | Object max index is " + variables.size() + " but index " + readIndex + " has been given");
+        if(variables.get(readIndex).getType() != WriteType.INTEGER)
+            throw new ClassCastException("DataChainSerializer | Type of variable index " + readIndex + " is not integer");
+        return variables.get(readIndex++).asString();
+    }
+
+
+    public double getDouble(){
+        if(readIndex >= variables.size())
+            throw new IndexOutOfBoundsException("DataChainSerializer | Object max index is " + variables.size() + " but index " + readIndex + " has been given");
+        if(variables.get(readIndex).getType() != WriteType.DOUBLE)
+            throw new ClassCastException("DataChainSerializer | Type of variable index " + readIndex + " is not double");
+        return variables.get(readIndex++).asDouble();
+    }
+
+
+    public short getShort(){
+        if(readIndex >= variables.size())
+            throw new IndexOutOfBoundsException("DataChainSerializer | Object max index is " + variables.size() + " but index " + readIndex + " has been given");
+        if(variables.get(readIndex).getType() != WriteType.INTEGER)
+            throw new ClassCastException("DataChainSerializer | Type of variable index " + readIndex + " is not short");
+        return variables.get(readIndex++).asShort();
+    }
+
+    public char getChar(){
+        if(readIndex >= variables.size())
+            throw new IndexOutOfBoundsException("DataChainSerializer | Object max index is " + variables.size() + " but index " + readIndex + " has been given");
+        if(variables.get(readIndex).getType() != WriteType.INTEGER)
+            throw new ClassCastException("DataChainSerializer | Type of variable index " + readIndex + " is not char");
+        return variables.get(readIndex++).asChar();
+    }
+
+    public boolean getBoolean(){
+        if(readIndex >= variables.size())
+            throw new IndexOutOfBoundsException("DataChainSerializer | Object max index is " + variables.size() + " but index " + readIndex + " has been given");
+        if(variables.get(readIndex).getType() != WriteType.INTEGER)
+            throw new ClassCastException("DataChainSerializer | Type of variable index " + readIndex + " is not boolean");
+        return variables.get(readIndex++).asBoolean();
+    }
+
+    public char[] getChars(){
+        if(readIndex >= variables.size())
+            throw new IndexOutOfBoundsException("DataChainSerializer | Object max index is " + variables.size() + " but index " + readIndex + " has been given");
+        if(variables.get(readIndex).getType() != WriteType.INTEGER)
+            throw new ClassCastException("DataChainSerializer | Type of variable index " + readIndex + " is not char array(char[])");
+        return variables.get(readIndex++).asChars();
+    }
+
+    public byte[] getBytes(){
+        if(readIndex >= variables.size())
+            throw new IndexOutOfBoundsException("DataChainSerializer | Object max index is " + variables.size() + " but index " + readIndex + " has been given");
+        if(variables.get(readIndex).getType() != WriteType.INTEGER)
+            throw new ClassCastException("DataChainSerializer | Type of variable index " + readIndex + " is not byte array(byte[])");
+        return variables.get(readIndex++).asBytes();
+    }
+
+
+
+
+
+
 }
