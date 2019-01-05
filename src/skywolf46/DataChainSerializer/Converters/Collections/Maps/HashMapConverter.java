@@ -27,8 +27,8 @@ public class HashMapConverter implements ClassConverter<HashMap> {
     public HashMap readData(ObjectDeserializer deserializer) {
         HashMap m = new HashMap();
         int size = deserializer.getVariables().get(0).asInt();
-        ObjectFieldDeserializer key = (ObjectFieldDeserializer) deserializer.getSubDeserializers().get(0);
-        ObjectFieldDeserializer val = (ObjectFieldDeserializer) deserializer.getSubDeserializers().get(1);
+        ObjectDeserializer key = deserializer.getSubDeserializers().get(0);
+        ObjectDeserializer val = deserializer.getSubDeserializers().get(1);
         for (int i = 0; i < size; i++)
             m.put(key.getVariables().get(i).getObject(), val.getVariables().get(i).getObject());
         return m;

@@ -17,6 +17,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ObjectDeserializer {
     private List<ObjectDeserializer> subDeserializers = new ArrayList<>();
     private List<VariableReader> variables = new ArrayList<>();
+    private static int limitation = 10240000;
 
     private int byteSize = 0;
 
@@ -27,6 +28,14 @@ public class ObjectDeserializer {
     private static HashMap<Integer, ObjectDeserializer> deserializerHashMap = new HashMap<>();
 
     private int readIndex = 0;
+
+    public static void setLimitation(int limit){
+        limitation = limit;
+    }
+
+    public static int getLimitation() {
+        return limitation;
+    }
 
     public ObjectDeserializer() {
 

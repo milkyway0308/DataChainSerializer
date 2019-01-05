@@ -41,3 +41,5 @@
 - ObjectDeserializer에 Iterator식 변수 게터가 추가되었습니다.
 - ObjectFieldDeserializer에 선택형 게터가 추가되었습니다.
 - ObjectSerializer에 writeBoolean(boolean)이 추가되었습니다.
+'1.3.0.1-#11':
+- HashMapConverter의 deserialize 도중 ClassCastException이 발생하는 오류를 해결하였습니다.
