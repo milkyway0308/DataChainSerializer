@@ -14,8 +14,8 @@ public class VariableReader<K> {
     private WriteType type;
     private Object obj;
 
+    private static int acceptSize = 1024000;
     private int bytes = 0;
-
     public VariableReader(ObjectInputStream stream) throws Exception {
         int a = stream.readShort();
         type = WriteType.get(a);
@@ -46,7 +46,12 @@ public class VariableReader<K> {
                 obj = stream.readBoolean();
                 break;
             case CHARS: {
-                char[] b = new char[stream.readInt()];
+                int size = stream.readInt();
+                if(size * 2 > ObjectDeserializer.getLimitation()){
+                    stream.close();
+                    throw new Exception("Acceptable size is " + ObjectDeserializer.getLimitation() + " byte, but " + size * 2 + "byte requested");
+                }
+                char[] b = new char[size];
                 for (int i = 0; i < b.length; i++){
                     b[i] = stream.readChar();
                 }
@@ -54,6 +59,10 @@ public class VariableReader<K> {
             }
             break;
             case BYTES: {
+//                if(size * 2 > ObjectDeserializer.getLimitation()){
+//                    stream.close();
+//                    throw new Exception("Acceptable size is " + ObjectDeserializer.getLimitation() + " byte, but " + size * 2 + "byte requested");
+//                }
                 byte[] b = new byte[stream.readInt()];
                 for (int i = 0; i < b.length; i++) {
                     b[i] = stream.readByte();
